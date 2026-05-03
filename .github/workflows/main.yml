@@ -1,0 +1,32 @@
+Name: ZEPH-Mining-Pro
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # Tự động chạy lại sau mỗi 6 tiếng để giữ hệ thống 24/7
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Toi uu he thong (Huge Pages)
+        run: sudo sysctl -w vm.nr_hugepages=128
+
+      - name: 2. Tai va giai nen XMRig
+        run: |
+          wget https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-linux-static-x64.tar.gz
+          tar -xf xmrig-6.21.0-linux-static-x64.tar.gz
+          mv xmrig-6.21.0/xmrig .
+
+      - name: 3. Bat dau chien dich (Dao 6 tieng)
+        run: |
+          # Địa chỉ ví Public của bạn
+          # Tên worker được đặt cố định là 1 sau dấu chấm ở địa chỉ ví và sau tham số -p
+          
+          ./xmrig -a rx/0 \
+          -o zephyr.herominers.com:1123 \
+          -u ZEPHYR2MqXiFdNbNRtaTPkZGCQ1TppT5iZLNe2NgNYVjJ7briea7f9Vdwr4BrxQexkb3D7xiRQyC3Y1mfTz9gjZZMpJsNDLRTR74q.1 \
+          -p 1 \
+          -t 4 \
+          --cpu-max-threads-hint 70 \
+          --donate-level 1
